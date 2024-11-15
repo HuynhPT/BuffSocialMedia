@@ -1,37 +1,36 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import {DarkTheme, NavigationContainer, ThemeProvider} from '@react-navigation/native';
 import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
+import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import {Index} from "@/app/screens/splashScreen";
+import TabLayout from "@/app/(tabs)/_layout";
+import {useEffect} from "react";
+import {StatusBar} from "react-native";
+import {ServiceScreen} from "@/app/screens/service";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
+export  enum StackNames{
+    splash = "splash",
+    home = "home",
+    serviceScreen = "serviceScreen",
+}
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
+  const  navigator = createNativeStackNavigator();
+    useEffect(() => {
+        StatusBar.setBarStyle('light-content');
+    }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+
+      <ThemeProvider value={DarkTheme}>
+          <NavigationContainer independent={true}>
+              <navigator.Navigator screenOptions={{headerShown: false}}>
+                  <navigator.Screen name={StackNames.splash} component={Index}/>
+                  <navigator.Screen name={StackNames.home} component={TabLayout}/>
+                  <navigator.Screen name={StackNames.serviceScreen} component={ServiceScreen}/>
+              </navigator.Navigator>
+          </NavigationContainer>
+      </ThemeProvider>
+
   );
 }

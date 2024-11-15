@@ -1,37 +1,31 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
+import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
+import HomeScreen from "@/app/(tabs)/index";
+import TabTwoScreen from "@/app/(tabs)/explore";
+import {TabBarIcon} from "@/components/navigation/TabBarIcon";
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+  const  BottomTab = createBottomTabNavigator();
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
+      <BottomTab.Navigator    screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+              backgroundColor: 'transparent', // Loại bỏ nền
+              position: 'absolute', // Đảm bảo BottomAppBar luôn ở dưới cùng
+              borderTopWidth: 0, // Loại bỏ viền trên
+              elevation: 0, // Loại bỏ bóng đổ (shadow)
+          },
       }}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'home' : 'home-outline'} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon name={focused ? 'code-slash' : 'code-slash-outline'} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+          <BottomTab.Screen name={'Trang chủ'} component={HomeScreen} options={({router}:any)=>({
+              tabBarIcon: ({focused, color, size}:{focused:boolean, color:string, size:number})=>{
+                  return <TabBarIcon name={'home'} style={{color: focused? 'yellow':'black'}}/>
+              },
+              tabBarActiveTintColor: 'yellow',
+          })}/>
+          <BottomTab.Screen name={'Lịch sử'} component={TabTwoScreen} options={({router}:any)=>({
+              tabBarIcon: ({focused, color, size}:{focused:boolean, color:string, size:number})=>{
+                  return <TabBarIcon name={'menu'} style={{color: focused? 'blue':'black'}}/>
+              }
+          })} />
+      </BottomTab.Navigator>
   );
 }
